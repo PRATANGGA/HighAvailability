@@ -398,3 +398,8 @@ sudo systemctl stop nginx
 ```
 
 - After stopping the Nginx service on the Master node, refresh the web page. The VIP should automatically switch to the Slave node, and you should still be able to access the web application without interruption.
+  ![final](./final.png)
+
+### Conclusion
+
+In this module, we successfully implemented a High Availability Web Server Architecture using Apache, Nginx, and Keepalived. This setup ensures that web services remain available even in the event of server failures, providing a robust solution for maintaining continuous service delivery.
