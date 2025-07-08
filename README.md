@@ -264,7 +264,7 @@ sudo systemctl enable --now nginx && sudo systemctl enable --now keepalived
 
 ### 9. COnfigure Nginx as Load Balancer
 
-Create a new configuration file on both Load Balancer
+Create a new configuration file on both Load Balancer (Load Balancer Master and Load Balancer Slave) nodes
 
 ```bash
 sudo vim /etc/nginx/conf.d/loadbalancer.conf
@@ -291,4 +291,88 @@ server {
     access_log /var/log/nginx/access.log;
     error_log /var/log/nginx/error.log;
 }
+```
+
+Check Nginx syntax for any errors
+
+```bash
+sudo nginx -t
+```
+
+Reload Nginx to apply the new configuration
+
+```bash
+sudo systemctl reload nginx
+```
+
+### 10. Configure Keepalived for Failover
+
+Now we will configure Keepalived on both Load Balancer nodes to ensure automatic failover
+
+#### On the Load Balancer Master (lb-master)
+
+edit the Keepalived configuration file
+
+```bash
+sudo vim /etc/keepalived/keepalived.conf
+```
+
+Paste the following configuration
+
+```conf
+vrrp_instance VI_1 {
+ interface enp0s8
+ state MASTER
+ priority 500
+ advert_int 1
+ unicast_src_ip 192.168.56.50
+ unicast_peer {
+ 192.168.56.51
+ }
+ virtual_router_id 33
+ virtual_ipaddress {
+ 192.168.56.100/24
+ }
+ authentication {
+ auth_type PASS
+ auth_pass udinus
+ }
+}
+```
+
+#### On the Load Balancer Slave (lb-slave)
+
+edit the Keepalived configuration file
+
+```bash
+vrrp_instance VI_1 {
+ interface enp0s8
+ state BACKUP
+ priority 100
+ advert_int 1
+ unicast_src_ip 192.168.56.51
+ unicast_peer {
+ 192.168.56.50
+ }
+ virtual_router_id 33
+ virtual_ipaddress {
+ 192.168.56.100/24
+ }
+ authentication {
+ auth_type PASS
+ auth_pass udinus
+ }
+}
+```
+
+After configuring both nodes,restart the Keepalived service on both Load Balancer nodes
+
+```bash
+sudo systemctl restart keepalived
+```
+
+Verify that the Virtual IP (VIP) is assigned to the Master node
+
+```bash
+ip a
 ```
