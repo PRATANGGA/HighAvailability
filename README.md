@@ -387,3 +387,11 @@ Now that everything is configured, we can test the High Availability setup
   ![web](./test.png)
 
 - Refresh the page several times. You should see alternating content like WEB 1 and WEB 2, which confirms that Nginx is distributing traffic between both backend web servers.
+  ![web](./test2.png)
+
+- try power off the Load Balancer Master node (lb-master) and refresh the page again. The VIP should automatically switch to the Load Balancer Slave node (lb-slave), and you should still be able to access the web application without interruption.
+- You can also test by stopping the Nginx service on the Master node and checking if the Slave node takes over.
+
+```bash
+sudo systemctl stop nginx
+```
