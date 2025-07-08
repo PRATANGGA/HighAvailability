@@ -60,6 +60,27 @@ Edit file:
 sudo vim /etc/netplan/50-cloud-init.yaml
 ```
 
+```yaml
+# This file is generated from information provided by the datasource. Changes
+# to it will not persist across an instance reboot. To disable cloud-init's
+# network configuration capabilities, write a file
+# /etc/cloud/cloud.cfg.d/99-disable-network-config.cfg with the following:
+# network: {config: disabled}
+network:
+  ethernets:
+    enp0s3: # NAT Interface (DHCP)
+      dhcp4: true
+    enp0s8: # Host-Only Interface (Static IP)
+      addresses:
+        - 192.168.56.50/24
+      dhcp4: false
+    enp0s9: # Internal Network Interface (Static IP)
+      addresses:
+        - 10.10.10.50/24
+      dhcp4: false
+  version: 2
+```
+
 📝 Repeat this step on each VM, adjusting the IP addresses based on the table above.
 
 ### 2. Set Hostname for Each VM
