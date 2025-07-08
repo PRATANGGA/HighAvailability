@@ -19,4 +19,110 @@ In this module, we will implement a High Availability Web Server Architecture th
 
 ### Network Topology
 
+The following diagram illustrates the high-level architecture of the High Availability Web Server setup
 ![Topology](./topology.jpg)
+
+### Description
+
+- Client sends request to the Virtual IP (VIP) managed by Keepalived.
+
+- The VIP routes traffic to one of the Load Balancer nodes (Nginx):
+
+  - If Load Balancer Master is available, it handles the traffic.
+
+  - If the Master fails, Keepalived shifts the VIP to the Backup node.
+
+- Nginx forwards the request to one of the two Apache Web Servers, which serve the actual web content.
+
+- Keepalived ensures failover between the two Load Balancer nodes without service disruption.
+
+---
+
+## Lab Environment
+
+| No  | Virtual Machine      | Spesifikasi      | NAT  | Host-Only        | Internal Network |
+| --- | -------------------- | ---------------- | ---- | ---------------- | ---------------- |
+| 1   | Load Balancer Master | 1 vCPU, 1 GB RAM | DHCP | 192.168.56.50/24 | 10.10.10.50/24   |
+| 2   | Load Balancer Slave  | 1 vCPU, 1 GB RAM | DHCP | 192.168.56.51/24 | 10.10.10.51/24   |
+| 3   | Web Server 1         | 1 vCPU, 1 GB RAM | DHCP | 192.168.56.52/24 | 10.10.10.52/24   |
+| 4   | Web Server 2         | 1 vCPU, 1 GB RAM | DHCP | 192.168.56.53/24 | 10.10.10.53/24   |
+
+---
+
+## Installation and Configuration Steps
+
+### 1. Configure VM Network Interfaces
+
+Each VM must be configured with three interfaces: NAT, Host-Only, and Internal Network.
+Edit file:
+
+```bash
+sudo vim /etc/netplan/50-cloud-init.yaml
+```
+
+📝 Repeat this step on each VM, adjusting the IP addresses based on the table above.
+
+### 2. Set Hostname for Each VM
+
+Assign a unique hostname to each virtual machine based on its role, to help easily identify them
+
+```bash
+# For Load Balancer Master
+sudo hostnamectl set-hostname lb-master
+
+# For Load Balancer Slave
+sudo hostnamectl set-hostname lb-slave
+
+# For Web Server 1
+sudo hostnamectl set-hostname web1
+
+# For Web Server 2
+sudo hostnamectl set-hostname web2
+```
+
+🔁 Reboot each VM so the terminal prompt updates to reflect the new hostname
+
+```bash
+sudo reboot
+```
+
+### 3. Update /etc/hosts File
+
+To allow all VMs to resolve each other's hostnames, edit the `/etc/hosts` file on each VM:
+
+```bash
+10.10.10.50   lb-master
+10.10.10.51   lb-slave
+10.10.10.52   web1
+10.10.10.53   web2
+```
+
+Save and exit. This will allow you to ping and communicate with each node using its hostname.
+
+### 4. Apache Installation on Web Servers
+
+These steps should be executed on both Web Server 1 and Web Server 2
+
+Update System Packages
+
+```bash
+sudo apt update -y
+```
+
+Install Apache Web Server
+
+```bash
+sudo apt install apache2 -y
+```
+
+Enable Apache to Start Apache service
+
+```bash
+sudo systemctl enable --now apache2
+```
+
+check Apache Service Status
+
+```bash
+sudo systemctl status apache2
+```
