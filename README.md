@@ -226,8 +226,69 @@ Enable the custom virtual host
 sudo a2ensite website.conf
 ```
 
-reload Apache to apply changes
+Reload Apache to apply changes
 
 ```bash
 sudo systemctl reload apache2
+```
+
+### 8. Install and Configure Nginx & Keepalived on Load Balancer nodes
+
+To ensure load balancing and automatic failover, we will install Nginx and Keepalived on both Load Balancer Master and Load Balancer Slave nodes.
+
+#### Install Required Packages
+
+Update the package list
+
+```bash
+sudo apt update -y
+```
+
+Install Nginx
+
+```bash
+sudo apt install nginx -y
+```
+
+Install Keepalived
+
+```bash
+sudo apt install keepalived -y
+```
+
+Enable and start both services
+
+```bash
+sudo systemctl enable --now nginx && sudo systemctl enable --now keepalived
+```
+
+### 9. COnfigure Nginx as Load Balancer
+
+Create a new configuration file on both Load Balancer
+
+```bash
+sudo vim /etc/nginx/conf.d/loadbalancer.conf
+```
+
+Add the following configuration to set up Nginx as a load balancer
+
+```nginx
+upstream web_backend {
+    server 10.10.10.52; # Web Server 1
+    server 10.10.10.53; # Web Server 2
+}
+
+server {
+    listen 80;
+    server_name dinus.local;
+
+    location / {
+        proxy_pass http://web_backend;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+
+    access_log /var/log/nginx/access.log;
+    error_log /var/log/nginx/error.log;
+}
 ```
