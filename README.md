@@ -213,3 +213,21 @@ Add following Configuration
     CustomLog ${APACHE_LOG_DIR}/access.log combined
 </VirtualHost>
 ```
+
+Disable the default configuration
+
+```bash
+sudo a2dissite 000-default.conf
+```
+
+Enable the custom virtual host
+
+```bash
+sudo a2ensite website.conf
+```
+
+reload Apache to apply changes
+
+```bash
+sudo systemctl reload apache2
+```
