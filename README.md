@@ -344,7 +344,7 @@ vrrp_instance VI_1 {
 
 edit the Keepalived configuration file
 
-```bash
+```conf
 vrrp_instance VI_1 {
  interface enp0s8
  state BACKUP
@@ -390,8 +390,11 @@ Now that everything is configured, we can test the High Availability setup
   ![web](./test2.png)
 
 - try power off the Load Balancer Master node (lb-master) and refresh the page again. The VIP should automatically switch to the Load Balancer Slave node (lb-slave), and you should still be able to access the web application without interruption.
-- You can also test by stopping the Nginx service on the Master node and checking if the Slave node takes over.
+  ![Power Off](./vm.png)
+- Or you can also test by stopping the Nginx service on the Master node and checking if the Slave node takes over.
 
 ```bash
 sudo systemctl stop nginx
 ```
+
+- After stopping the Nginx service on the Master node, refresh the web page. The VIP should automatically switch to the Slave node, and you should still be able to access the web application without interruption.
