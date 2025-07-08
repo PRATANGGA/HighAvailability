@@ -13,7 +13,7 @@ High Availability (HA) refers to systems that are designed to be operational and
 - **Keepalived** (Failover Management)
   Works together with Nginx to provide fault tolerance. It manages a Virtual IP Address (VIP) that floats between two Nginx instances (Master and Backup). If the master load balancer fails, Keepalived promotes the backup node to master and assigns the VIP to it, ensuring uninterrupted access for users.
 
-## What Will Be Done in This Module?
+## Objectives of This Module?
 
 In this module, we will implement a High Availability Web Server Architecture that ensures reliable and uninterrupted web service delivery through the combination of load balancing, redundancy, and failover mechanisms.
 
@@ -60,6 +60,8 @@ Edit file:
 sudo vim /etc/netplan/50-cloud-init.yaml
 ```
 
+Example configuration for Load Balancer Master:
+
 ```yaml
 # This file is generated from information provided by the datasource. Changes
 # to it will not persist across an instance reboot. To disable cloud-init's
@@ -79,6 +81,12 @@ network:
         - 10.10.10.50/24
       dhcp4: false
   version: 2
+```
+
+Apply the configuration changes
+
+```bash
+sudo netplan apply
 ```
 
 📝 Repeat this step on each VM, adjusting the IP addresses based on the table above.
