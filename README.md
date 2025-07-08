@@ -376,3 +376,14 @@ Verify that the Virtual IP (VIP) is assigned to the Master node
 ```bash
 ip a
 ```
+
+### 11. Testing the High Availability Setup
+
+Now that everything is configured, we can test the High Availability setup
+
+#### Access the Web Application
+
+- open a web browser and navigate to the Virtual IP address (192.168.56.100)
+  ![web](./test.png)
+
+- Refresh the page several times. You should see alternating content like WEB 1 and WEB 2, which confirms that Nginx is distributing traffic between both backend web servers.
