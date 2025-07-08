@@ -126,3 +126,61 @@ check Apache Service Status
 ```bash
 sudo systemctl status apache2
 ```
+
+### 5. Instal PHP (Optional for Dynamic Content)
+
+To test the Apache server with PHP, install the following packages
+
+```bash
+sudo apt install php libapache2-mod-php -y
+```
+
+### 6. Prepare Sample Web Content
+
+Create a new directory for the website
+
+```bash
+sudo mkdir -p /var/www/website
+```
+
+Create an `index.php` file with sample content
+
+```bash
+sudo vim /var/www/website/index.php
+```
+
+Example content for Web Server 1
+
+```php
+<h1>WEB 1</h1>
+<?php phpinfo(); ?>
+```
+
+on Web Server 2, cahnge the heading to "WEB 2" to help identify which server is responding during load balancing tests.
+
+### 7. Configure Apache Virtual Host
+
+Create a new virtual host file
+
+```bash
+sudo vim /etc/apache2/sites-available/website.conf
+```
+
+Add following Configuration
+
+```apacheconf
+<VirtualHost *:80>
+    ServerAdmin webmaster@localhost
+    DocumentRoot /var/www/website
+    ServerName dinus.local
+
+    <Directory /var/www/website>
+        Options Indexes FollowSymLinks
+        AllowOverride All
+        Require all granted
+    </Directory>
+
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+```
