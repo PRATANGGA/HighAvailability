@@ -19,4 +19,4 @@ In this module, we will implement a High Availability Web Server Architecture th
 
 ### Network Topology
 
-![Topology](./topologi.png)
+![Topology](./topologi.jpg)
